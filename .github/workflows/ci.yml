@@ -21,16 +21,14 @@ jobs:
     - name: Create configuration
       run: |
         DOCKER_IMAGE=dnsmasq
-        VERSION=noop
         DNSMASQ_VERSION=$(cat .dnsmasq-version)
         PUSH=true
-        TAGS="${{ env.docker_repository }}:$DOCKER_IMAGE-${VERSION}"
+        TAGS="${{ env.docker_repository }}:$DOCKER_IMAGE-${DNSMASQ_VERSION}"
         TAGS="$TAGS,${{ env.docker_repository }}:$DOCKER_IMAGE-latest"
-        TAGS="$TAGS,${{ env.docker_repository }}:$DOCKER_IMAGE-${VERSION}-${GITHUB_SHA::8}"
+        TAGS="$TAGS,${{ env.docker_repository }}:$DOCKER_IMAGE-${DNSMASQ_VERSION}-${GITHUB_SHA::8}"
 
         # Store docker build info in env file for use by docker job
         printf "%s\n" \
-          "version=${VERSION}" \
           "dnsmasq_version=$DNSMASQ_VERSION" \
           "tags=${TAGS}" \
           "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
@@ -99,6 +97,6 @@ jobs:
         labels: |
           org.opencontainers.image.created=${{ env.created }}
           org.opencontainers.image.source=${{ github.repositoryUrl }}
-          org.opencontainers.image.version=${{ env.version }}
+          org.opencontainers.image.version=${{ env.dnsmasq_version }}
           org.opencontainers.image.revision=${{ github.sha }}
           org.opencontainers.image.licenses=${{ github.event.repository.license.name }}
