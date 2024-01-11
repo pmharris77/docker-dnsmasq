@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get the latest release version of Dnsmasq
+      - name: Get the latest available version of Dnsmasq
         run: |
           git clone git://thekelleys.org.uk/dnsmasq.git
           cd dnsmasq
@@ -23,16 +23,21 @@ jobs:
           echo "NEW_VERSION = $NEW_VERSION" # For debug
           echo "NEW_VERSION=$(echo $NEW_VERSION)" >> $GITHUB_ENV
 
-      - name: Get current version of Dnsmasq we are using
+      - name: Get current used version of Dnsmasq
         run: |
           CURRENT_VERSION=$(cat .dnsmasq-version)
           echo "CURRENT_VERSION = $CURRENT_VERSION" # For debug
           echo "CURRENT_VERSION=$(echo $CURRENT_VERSION)" >> $GITHUB_ENV
 
-      - name: Debug
+      - name: Determine if update required
         run: |
-          echo "CURRENT_VERSION=${{env.CURRENT_VERSION}}"
-    
+          if ((${{env.NEW_VERSION}} > ${{env.CURRENT_VERSION}}))
+          then
+              echo "Update required"
+          else
+              echo "Update not required"
+          fi
+
       - name: List existing update PRs matching this version
         uses: buildsville/list-pull-requests@v1.0.1
         id:   list_prs # Used for retrieving output in other steps
