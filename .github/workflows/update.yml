@@ -1,6 +1,7 @@
 name: Update to latest Dnsmasq version
 
 on:
+  workflow_dispatch: # For manually running on GitHub webpage
   schedule:
     - cron: '0 10 * * 0'  # every Sunday at 10am
     # - cron: '*/30 * * * *'  # every 30 min

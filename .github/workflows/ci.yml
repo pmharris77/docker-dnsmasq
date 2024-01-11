@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch: # For manually running on GitHub webpage
   push:
     branches:
       - main
