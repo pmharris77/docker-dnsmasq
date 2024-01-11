@@ -23,13 +23,14 @@ jobs:
 
       - name: List existing update PRs matching this version
         uses: buildsville/list-pull-requests@v1.0.1
+        id:   list_prs # Used for retrieving output in other steps
         with:
-          token: ${{secrets.GITHUB_TOKEN}}
-          labels: '["${{ env.NEW_VERSION }}"]'
+          token:     ${{secrets.GITHUB_TOKEN}}
+          labels:    '["${{ env.NEW_VERSION }}"]'
           skip_hour: '0'
 
       - name: Cancel workflow if there is already a PR for this version
-        run: echo '${{ steps.list.outputs.pulls }}' 
+        run: echo '${{ steps.list_prs.outputs.pulls }}' 
 
       - name: Update Dnsmasq config example
         run: |
@@ -47,6 +48,6 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: Update to Dnsmasq ${{ env.NEW_VERSION }}
-          title: Update to Dnsmasq ${{ env.NEW_VERSION }}
-          labels: ${{ env.NEW_VERSION }}
-          delete-branch: true
+          title:          Update to Dnsmasq ${{ env.NEW_VERSION }}
+          labels:         ${{ env.NEW_VERSION }}
+          delete-branch:  true
