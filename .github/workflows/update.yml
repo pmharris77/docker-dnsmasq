@@ -21,6 +21,15 @@ jobs:
           new_version=${new_version:1}
           echo "NEW_VERSION=$(echo $new_version)" >> $GITHUB_ENV
 
+      - name: List existing update PRs matching this version
+        uses: buildsville/list-pull-requests@v1.0.1
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          labels: '["$new_version"]'
+
+      - name: Cancel workflow if there is already a PR for this version
+        run: echo '${{ steps.list.outputs.pulls }}' 
+
       - name: Update Dnsmasq config example
         run: |
           cp dnsmasq/dnsmasq.conf.example ../dnsmasq.conf.example
@@ -38,4 +47,5 @@ jobs:
         with:
           commit-message: Update to Dnsmasq ${{ env.NEW_VERSION }}
           title: Update to Dnsmasq ${{ env.NEW_VERSION }}
+          labels: ${{ env.NEW_VERSION }}
           delete-branch: true
