@@ -34,16 +34,16 @@ jobs:
           if [[ ${{env.NEW_VERSION}} > ${{env.CURRENT_VERSION}} ]]
           then
               echo "Newer version of dnsmasq available, proceeding..."
-              echo "NEWER_VERSION_AVAILABLE=TRUE" >> $GITHUB_ENV
+              echo "NEWER_VERSION_AVAILABLE=true" >> $GITHUB_ENV
           else
               echo "Already using latest dnsmasq, subsequent steps will be skipped..."
-              echo "NEWER_VERSION_AVAILABLE=FALSE" >> $GITHUB_ENV
+              echo "NEWER_VERSION_AVAILABLE=false" >> $GITHUB_ENV
           fi
 
       # ========== THESE STEPS ONLY RUN IF A NEWER VERSION OF DNSMASQ WAS FOUND ==========
         
       - name: List existing update PRs matching new version (if any)
-        if:   ${{ env.NEWER_VERSION_AVAILABLE == "TRUE" }}
+        if:   env.NEWER_VERSION_AVAILABLE == 'true'
         uses: buildsville/list-pull-requests@v1.0.1
         id:   list_prs # Used for retrieving output in other steps
         with:
@@ -52,27 +52,27 @@ jobs:
           skip_hour: '0'
 
       - name: Determine if PR already exists for newer version
-        if:   ${{ env.NEWER_VERSION_AVAILABLE == "TRUE" }}
+        if:   env.NEWER_VERSION_AVAILABLE == 'true'
         run: |
           if [ ! -z "${{ steps.list_prs.outputs.pulls }}" ]
           then
               echo "Skipping code update as one or more PRs already exist for version ${{env.NEW_VERSION}}: ${{ steps.list_prs.outputs.pulls }}"
-              echo "UPDATE_REQUIRED=FALSE" >> $GITHUB_ENV
+              echo "UPDATE_REQUIRED=false" >> $GITHUB_ENV
           else
               echo "No PR already exists for version ${{env.NEW_VERSION}}. Proceeding with code update"
-              echo "UPDATE_REQUIRED=TRUE" >> $GITHUB_ENV
+              echo "UPDATE_REQUIRED=true" >> $GITHUB_ENV
           fi
 
       # ========== THESE STEPS ONLY RUN IF A NEWER VERSION OF DNSMASQ WAS FOUND AND NO EXIST PR FOR IT ==========
 
       - name: Update Dnsmasq config example
-        if:   ${{ env.UPDATE_REQUIRED == "TRUE" }}
+        if:   env.UPDATE_REQUIRED == 'true'
         run: |
           cp dnsmasq/dnsmasq.conf.example ../dnsmasq.conf.example
           rm -fr dnsmasq
 
       - name: Update Dnsmasq version
-        if:   ${{ env.UPDATE_REQUIRED == "TRUE" }}
+        if:   env.UPDATE_REQUIRED == 'true'
         run: |
           current_version=$(cat .dnsmasq-version)
           for f in .dnsmasq-version README.md Dockerfile docker-compose.yml; do
@@ -80,7 +80,7 @@ jobs:
           done
 
       - name: Send pull request to update to new version
-        if:   ${{ env.UPDATE_REQUIRED == "TRUE" }}
+        if:   env.UPDATE_REQUIRED == 'true'
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: Update to Dnsmasq ${{ env.NEW_VERSION }}
