@@ -10,7 +10,7 @@ on:
   pull_request:
 
 env:
-  docker_repository: pmharris77/docker
+  docker_repository: paulharris77/docker
 
 jobs:
   configure:
@@ -24,15 +24,6 @@ jobs:
         VERSION=noop
         DNSMASQ_VERSION=$(cat .dnsmasq-version)
         PUSH=true
-        # If we are building from a tagged commit
-        if [[ $GITHUB_REF == refs/tags/* ]]; then
-          # VERSION=${GITHUB_REF#refs/tags/}  # use Dnsmasq version instead
-          VERSION=$DNSMASQ_VERSION
-        # If we are building from a branch
-        elif [[ $GITHUB_REF == refs/heads/* ]]; then
-          VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g') # sed replaces "/" with "-" in branch name
-        fi
-
         TAGS="${{ env.docker_repository }}:$DOCKER_IMAGE-${VERSION}"
         TAGS="$TAGS,${{ env.docker_repository }}:$DOCKER_IMAGE-latest"
         TAGS="$TAGS,${{ env.docker_repository }}:$DOCKER_IMAGE-${VERSION}-${GITHUB_SHA::8}"
