@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get current release of Dnsmasq we are using
         run: |
-          echo "CURRENT_VERSION=$(cat .dnsmasq-version)" >> $GITHUB_ENV
+          echo "CURRENT_VERSION=${cat .dnsmasq-version}" >> $GITHUB_ENV
           echo "CURRENT_VERSION=${{env.CURRENT_VERSION}}"
     
       - name: List existing update PRs matching this version
