@@ -7,8 +7,8 @@ on:
     # - cron: '*/30 * * * *'  # every 30 min
 
 jobs:
-  check-version:
-    name: Check if Dnsmasq version needs updating
+  check-and-update:
+    name: Check if Dnsmasq version needs updating and update (if necessary)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,12 +33,17 @@ jobs:
         run: |
           if [[ ${{env.NEW_VERSION}} > ${{env.CURRENT_VERSION}} ]]
           then
-              echo "Update required"
+              echo "Newer version of dnsmasq available, proceeding..."
+              echo "NEWER_VERSION_AVAILABLE=TRUE" >> $GITHUB_ENV
           else
-              echo "Update not required"
+              echo "Already using latest dnsmasq, subsequent steps will be skipped..."
+              echo "NEWER_VERSION_AVAILABLE=FALSE" >> $GITHUB_ENV
           fi
 
-      - name: List existing update PRs matching this version
+      # ========== THESE STEPS ONLY RUN IF A NEWER VERSION OF DNSMASQ WAS FOUND ==========
+        
+      - name: List existing update PRs matching new version (if any)
+        if:   ${{ env.NEWER_VERSION_AVAILABLE == "TRUE" }}
         uses: buildsville/list-pull-requests@v1.0.1
         id:   list_prs # Used for retrieving output in other steps
         with:
@@ -46,38 +51,41 @@ jobs:
           labels:    '["${{ env.NEW_VERSION }}"]'
           skip_hour: '0'
 
-      - name: Fail workflow if there is already a PR for this version
+      - name: Determine if PR already exists for newer version
+        if:   ${{ env.NEWER_VERSION_AVAILABLE == "TRUE" }}
         run: |
           if [ ! -z "${{ steps.list_prs.outputs.pulls }}" ]
           then
-              echo "FAIL: The following PRs already exist for version ${{env.NEW_VERSION}}: ${{ steps.list_prs.outputs.pulls }}"
-              exit 1
+              echo "Skipping code update as one or more PRs already exist for version ${{env.NEW_VERSION}}: ${{ steps.list_prs.outputs.pulls }}"
+              echo "UPDATE_REQUIRED=FALSE" >> $GITHUB_ENV
+          else
+              echo "No PR already exists for version ${{env.NEW_VERSION}}. Proceeding with code update"
+              echo "UPDATE_REQUIRED=TRUE" >> $GITHUB_ENV
           fi
 
-  # update:
-  #   if: 
-  #   name: Update source code and publish PR
-  #   runs-on: ubuntu-latest
-  #   needs: [check-version]
-  #   steps:
-  #   - name: Update Dnsmasq config example
-  #     run: |
-  #       cp dnsmasq/dnsmasq.conf.example ../dnsmasq.conf.example
-  #       rm -fr dnsmasq
+      # ========== THESE STEPS ONLY RUN IF A NEWER VERSION OF DNSMASQ WAS FOUND AND NO EXIST PR FOR IT ==========
 
-  #   - name: Update Dnsmasq version
-  #     run: |
-  #       current_version=$(cat .dnsmasq-version)
-  #       for f in .dnsmasq-version README.md Dockerfile docker-compose.yml; do
-  #         sed -i "s/${current_version}/${{env.NEW_VERSION}}/g" "$f"
-  #       done
+      - name: Update Dnsmasq config example
+        if:   ${{ env.UPDATE_REQUIRED == "TRUE" }}
+        run: |
+          cp dnsmasq/dnsmasq.conf.example ../dnsmasq.conf.example
+          rm -fr dnsmasq
 
-  #   - name: Send pull request to update to new version
-  #     uses: peter-evans/create-pull-request@v3
-  #     with:
-  #       commit-message: Update to Dnsmasq ${{ env.NEW_VERSION }}
-  #       title:          Update to Dnsmasq ${{ env.NEW_VERSION }}
-  #       labels:         ${{ env.NEW_VERSION }}
-  #       assignees:      pmharris77
-  #       reviewers:      pmharris77
-  #       delete-branch:  true
+      - name: Update Dnsmasq version
+        if:   ${{ env.UPDATE_REQUIRED == "TRUE" }}
+        run: |
+          current_version=$(cat .dnsmasq-version)
+          for f in .dnsmasq-version README.md Dockerfile docker-compose.yml; do
+            sed -i "s/${{env.CURRENT_VERSION}}/${{env.NEW_VERSION}}/g" "$f"
+          done
+
+      - name: Send pull request to update to new version
+        if:   ${{ env.UPDATE_REQUIRED == "TRUE" }}
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Update to Dnsmasq ${{ env.NEW_VERSION }}
+          title:          Update to Dnsmasq ${{ env.NEW_VERSION }}
+          labels:         ${{ env.NEW_VERSION }}
+          assignees:      pmharris77
+          reviewers:      pmharris77
+          delete-branch:  true
