@@ -31,7 +31,7 @@ jobs:
 
       - name: Determine if update required
         run: |
-          if ((${{env.NEW_VERSION}} > ${{env.CURRENT_VERSION}}))
+          if ((${{env.NEW_VERSION}} -gt ${{env.CURRENT_VERSION}}))
           then
               echo "Update required"
           else
