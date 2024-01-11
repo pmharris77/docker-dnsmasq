@@ -59,7 +59,7 @@ jobs:
               echo "Skipping code update as one or more PRs already exist for version ${{env.NEW_VERSION}}: ${{ steps.list_prs.outputs.pulls }}"
               echo "UPDATE_REQUIRED=false" >> $GITHUB_ENV
           else
-              echo "No PR already exists for version ${{env.NEW_VERSION}}. Proceeding with code update"
+              echo "No PR already exists for version ${{env.NEW_VERSION}}. Proceeding with code update..."
               echo "UPDATE_REQUIRED=true" >> $GITHUB_ENV
           fi
 
