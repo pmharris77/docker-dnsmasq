@@ -29,8 +29,13 @@ jobs:
           labels:    '["${{ env.NEW_VERSION }}"]'
           skip_hour: '0'
 
-      - name: Cancel workflow if there is already a PR for this version
-        run: echo '${{ steps.list_prs.outputs.pulls }}' 
+      - name: Fail workflow if there is already a PR for this version
+        run: |
+          if [ ! -z "${{ steps.list_prs.outputs.pulls }}" ]
+          then
+              echo "FAIL: The following PRs already exist for version ${{env.NEW_VERSION}}: ${{ steps.list_prs.outputs.pulls }}"
+              exit 1
+          fi
 
       - name: Update Dnsmasq config example
         run: |
