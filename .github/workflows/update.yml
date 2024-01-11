@@ -21,8 +21,6 @@ jobs:
           new_version=${new_version:1}
           echo "NEW_VERSION=$(echo $new_version)" >> $GITHUB_ENV
 
-      - 
-
       - name: List existing update PRs matching this version
         uses: buildsville/list-pull-requests@v1.0.1
         id:   list_prs # Used for retrieving output in other steps
