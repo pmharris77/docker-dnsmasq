@@ -27,6 +27,9 @@ jobs:
           current_version=$(cat .dnsmasq-version)
           echo $current_version
           echo "CURRENT_VERSION=$(echo $current_version)" >> $GITHUB_ENV
+
+      - name: Debug
+        run: |
           echo "CURRENT_VERSION=${{env.CURRENT_VERSION}}"
     
       - name: List existing update PRs matching this version
