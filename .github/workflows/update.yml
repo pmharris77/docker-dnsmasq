@@ -16,16 +16,16 @@ jobs:
       - name: Get the latest release version of Dnsmasq
         run: |
           git clone git://thekelleys.org.uk/dnsmasq.git
-          pushd dnsmasq
+          cd dnsmasq
           new_version=$(git describe --abbrev=0 --exclude '*rc*' --exclude '*test*')
           # Trim leading 'v' in semantic version
           new_version=${new_version:1}
           echo "NEW_VERSION=$(echo $new_version)" >> $GITHUB_ENV
-          popd
 
       - name: Get current version of Dnsmasq we are using
         run: |
           current_version=$(cat .dnsmasq-version)
+          echo $current_version
           echo "CURRENT_VERSION=$(echo $current_version)" >> $GITHUB_ENV
           echo "CURRENT_VERSION=${{env.CURRENT_VERSION}}"
     
