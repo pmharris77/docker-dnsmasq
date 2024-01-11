@@ -25,7 +25,8 @@ jobs:
         uses: buildsville/list-pull-requests@v1.0.1
         with:
           token: ${{secrets.GITHUB_TOKEN}}
-          labels: "[\"${{ env.NEW_VERSION }}\"]"
+          labels: '["${{ env.NEW_VERSION }}"]'
+          skip_hour: '0'
 
       - name: Cancel workflow if there is already a PR for this version
         run: echo '${{ steps.list.outputs.pulls }}' 
