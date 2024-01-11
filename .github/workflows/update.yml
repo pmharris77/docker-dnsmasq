@@ -11,7 +11,7 @@ jobs:
     name: Check and update Dnsmasq
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Get the latest release version of Dnsmasq
         run: |
           git clone git://thekelleys.org.uk/dnsmasq.git
