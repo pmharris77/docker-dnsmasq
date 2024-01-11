@@ -6,7 +6,7 @@ See [README.md](https://github.com/tschaffter/docker-dnsmasq/blob/main/README.md
 
 ## Specification
 
-- Dnsmasq version: 2.85
+- Dnsmasq version: 2.89
 - Docker images: [pmharris77/docker] - see all tagged images of format dnsmasq-*
 
 
