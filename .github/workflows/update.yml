@@ -20,6 +20,7 @@ jobs:
           new_version=$(git describe --abbrev=0 --exclude '*rc*' --exclude '*test*')
           # Trim leading 'v' in semantic version
           new_version=${new_version:1}
+          echo "NEW_VERSION = $new_version"
           echo "NEW_VERSION=$(echo $new_version)" >> $GITHUB_ENV
 
       - name: Get current version of Dnsmasq we are using
