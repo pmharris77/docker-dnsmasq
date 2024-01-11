@@ -1,7 +1,7 @@
 # Docker image for Dnsmasq
 Personal fork of [tschaffter/docker-dnsmasq] repo (which does not appear to be being maintained).
 
-See README.md file from original repo ([tschaffter/docker-dnsmasq]) for usage instructions.
+See [README.md](https://github.com/tschaffter/docker-dnsmasq/blob/main/README.md) file from original repo ([tschaffter/docker-dnsmasq]) for usage instructions.
 
 
 ## Specification
