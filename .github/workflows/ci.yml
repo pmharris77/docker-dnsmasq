@@ -30,7 +30,7 @@ jobs:
         printf "%s\n" \
           "dnsmasq_version=$DNSMASQ_VERSION" \
           "tags=${TAGS}" \
-          "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" tee -a .github_env
+          "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" | tee -a .github_env
 
     - name: Upload .github_env
       uses: actions/upload-artifact@v4
