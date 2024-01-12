@@ -47,10 +47,9 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Lint Dockerfiles
-      uses: docker://hadolint/hadolint:latest
+      uses: hadolint/hadolint-action@v3.1.0
       with:
-        entrypoint: hadolint
-        args: Dockerfile
+        dockerfile: Dockerfile
 
     - name: Validate docker-compose.yml
       run: |
