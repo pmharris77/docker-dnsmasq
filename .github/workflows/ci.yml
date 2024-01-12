@@ -1,4 +1,4 @@
-name: CI
+name: Build image and push to DockerHub
 
 on:
   workflow_dispatch: # For manually running on GitHub webpage
@@ -22,7 +22,6 @@ jobs:
       run: |
         DOCKER_IMAGE=dnsmasq
         DNSMASQ_VERSION=$(cat .dnsmasq-version)
-        PUSH=true
         TAGS="${{ env.docker_repository }}:$DOCKER_IMAGE-${DNSMASQ_VERSION}"
         TAGS="$TAGS,${{ env.docker_repository }}:$DOCKER_IMAGE-latest"
         TAGS="$TAGS,${{ env.docker_repository }}:$DOCKER_IMAGE-${DNSMASQ_VERSION}-${GITHUB_SHA::8}"
@@ -31,8 +30,7 @@ jobs:
         printf "%s\n" \
           "dnsmasq_version=$DNSMASQ_VERSION" \
           "tags=${TAGS}" \
-          "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-          "push=${PUSH}" | tee -a .github_env
+          "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" tee -a .github_env
 
     - name: Upload .github_env
       uses: actions/upload-artifact@v4
@@ -77,7 +75,6 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Login to DockerHub
-      if: env.push == 'true'
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -90,7 +87,6 @@ jobs:
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm/v7,linux/arm64
-        push: ${{ env.push }}
         tags: ${{ env.tags }}
         labels: |
           org.opencontainers.image.created=${{ env.created }}
