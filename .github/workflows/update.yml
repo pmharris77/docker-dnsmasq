@@ -74,7 +74,6 @@ jobs:
       - name: Update Dnsmasq version
         if:   env.UPDATE_REQUIRED == 'true'
         run: |
-          current_version=$(cat .dnsmasq-version)
           for f in .dnsmasq-version README.md Dockerfile docker-compose.yml; do
             sed -i "s/${{env.CURRENT_VERSION}}/${{env.NEW_VERSION}}/g" "$f"
           done
