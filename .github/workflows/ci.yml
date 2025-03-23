@@ -37,6 +37,7 @@ jobs:
       with:
         name: GITHUB_ENV
         path: .github_env
+        include-hidden-files: true
 
   lint:
     needs: [configure]
