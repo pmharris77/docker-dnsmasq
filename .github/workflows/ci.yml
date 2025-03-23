@@ -51,7 +51,7 @@ jobs:
 
     - name: Validate docker-compose.yml
       run: |
-        docker-compose -f docker-compose.yml config >/dev/null
+        docker compose -f docker-compose.yml config >/dev/null
 
   docker:
     needs: [lint]
