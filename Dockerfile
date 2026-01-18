@@ -1,7 +1,7 @@
 FROM debian:10.10-slim as dnsmasq
 
 # This dnsmasq version default can be overriden by setting a different value in the docker build arguments (e.g. docker build --build-arg="DNSMASQ_VERSION=2.86")
-ARG DNSMASQ_VERSION="2.91"
+ARG DNSMASQ_VERSION="2.92"
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
