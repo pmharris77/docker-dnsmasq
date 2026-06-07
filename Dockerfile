@@ -1,4 +1,4 @@
-FROM debian:13.5-slim as dnsmasq
+FROM debian:13.5-slim AS dnsmasq
 
 # This dnsmasq version default can be overriden by setting a different value in the docker build arguments (e.g. docker build --build-arg="DNSMASQ_VERSION=2.86")
 ARG DNSMASQ_VERSION="2.93"
