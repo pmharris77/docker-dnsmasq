@@ -51,7 +51,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         iputils-ping \
         gosu \
-				adduser \
+        adduser \
     && rm -rf \
         /tmp/* \
         /var/tmp/* \
