@@ -1,4 +1,4 @@
-FROM debian:10.10-slim as dnsmasq
+FROM debian:13.5-slim as dnsmasq
 
 # This dnsmasq version default can be overriden by setting a different value in the docker build arguments (e.g. docker build --build-arg="DNSMASQ_VERSION=2.86")
 ARG DNSMASQ_VERSION="2.93"
@@ -42,7 +42,7 @@ RUN gpg --keyserver keyring.debian.org --recv-keys E19135A2 \
     && git log -n 1 --pretty=format:%G? | grep "U" \
     && make install
 
-FROM debian:10.10-slim
+FROM debian:13.5-slim
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
